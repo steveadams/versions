@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "lib": ["ESNext"],
+    "isolatedModules": true,
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "target": "ES2019",
+    "strict": true,
+    "baseUrl": ".",
+    "incremental": true,
+    "skipLibCheck": true,
+  }
+}
