@@ -1,11 +1,11 @@
 import { match } from "ts-pattern";
 
-const allBeforeFirstDigitRegEx = new RegExp(/(.*?)\d/);
+const allBeforeFirstDigit = new RegExp(/(.*?)\d/);
 
-type Integer = IntRange<10>;
+type Integer = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
-export type VersionNumber = `${Integer}` | `${Integer}${Integer}`;
-export type Version = `${VersionNumber}` | `${VersionNumber}.${VersionNumber}`;
+export type VersionPart = `${Integer}` | `${Integer}${Integer}`;
+export type Version = `${VersionPart}` | `${VersionPart}.${VersionPart}`;
 
 export type Comparitor = ">" | "<" | "<=" | ">=";
 export type Spec = `${Comparitor}${Version}`;
@@ -26,20 +26,20 @@ export const extractVersionAndSpec = (
   );
 };
 
-export const extractVersions = (
+export const extractVersionParts = (
   version: Version
-): [VersionNumber, VersionNumber] => {
+): [VersionPart, VersionPart] => {
   const [major, minor = "0"] = version.split(".");
 
   if (minor.length === 1) {
-    return [major, `${minor}0`] as [VersionNumber, VersionNumber];
+    return [major, `${minor}0`] as [VersionPart, VersionPart];
   }
 
-  return [major, minor] as [VersionNumber, VersionNumber];
+  return [major, minor] as [VersionPart, VersionPart];
 };
 
 export const extractComparitor = (spec: Spec): Comparitor => {
-  const matches = allBeforeFirstDigitRegEx.exec(spec);
+  const matches = allBeforeFirstDigit.exec(spec);
 
   if (!matches) {
     throw new Error(`Failed to get a valid comparitor from the spec: ${spec}`);
@@ -49,59 +49,43 @@ export const extractComparitor = (spec: Spec): Comparitor => {
 };
 
 const greaterThan: Predicate = (compare, spec) => {
-  const [compareMajor, compareMinor] = extractVersions(compare);
-  const [specMajor, specMinor] = extractVersions(spec);
+  const [major, minor] = extractVersionParts(compare);
+  const [specMajor, specMinor] = extractVersionParts(spec);
 
-  if (compareMajor !== specMajor) {
-    return compareMajor > specMajor;
-  }
-
-  return compareMinor > specMinor;
+  return major !== specMajor ? major > specMajor : minor > specMinor;
 };
 
-const lessThan: Predicate = (compare, spec) => {
-  const [compareMajor, compareMinor] = extractVersions(compare);
-  const [specMajor, specMinor] = extractVersions(spec);
+const lessThan: Predicate = (comparable, spec) => {
+  const [major, minor] = extractVersionParts(comparable);
+  const [specMajor, specMinor] = extractVersionParts(spec);
 
-  if (compareMajor !== specMajor) {
-    return compareMajor < specMajor;
-  }
-
-  return compareMinor < specMinor;
+  return major !== specMajor ? major < specMajor : minor < specMinor;
 };
 
-const greaterThanOrEqual: Predicate = (compare, spec) => {
-  const [compareMajor, compareMinor] = extractVersions(compare);
-  const [specMajor, specMinor] = extractVersions(spec);
+const greaterThanOrEqual: Predicate = (comparable, spec) => {
+  const [major, minor] = extractVersionParts(comparable);
+  const [specMajor, specMinor] = extractVersionParts(spec);
 
-  if (compareMajor !== specMajor) {
-    return compareMajor >= specMajor;
-  }
-
-  return compareMinor >= specMinor;
+  return major !== specMajor ? major >= specMajor : minor >= specMinor;
 };
 
-const lessThanOrEqual: Predicate = (compare, spec) => {
-  const [compareMajor, compareMinor] = extractVersions(compare);
-  const [specMajor, specMinor] = extractVersions(spec);
+const lessThanOrEqual: Predicate = (comparable, spec) => {
+  const [major, minor] = extractVersionParts(comparable);
+  const [specMajor, specMinor] = extractVersionParts(spec);
 
-  if (compareMajor !== specMajor) {
-    return compareMajor <= specMajor;
-  }
-
-  return compareMinor <= specMinor;
+  return major !== specMajor ? major <= specMajor : minor <= specMinor;
 };
 
 export const compareVersions = (
-  comparison: Version,
+  versionForComparison: Version,
   comparitor: Comparitor,
-  spec: Version
+  specVersion: Version
 ): boolean =>
   match(comparitor)
-    .with(">", () => greaterThan(comparison, spec))
-    .with("<", () => lessThan(comparison, spec))
-    .with(">=", () => greaterThanOrEqual(comparison, spec))
-    .with("<=", () => lessThanOrEqual(comparison, spec))
+    .with(">", () => greaterThan(versionForComparison, specVersion))
+    .with("<", () => lessThan(versionForComparison, specVersion))
+    .with(">=", () => greaterThanOrEqual(versionForComparison, specVersion))
+    .with("<=", () => lessThanOrEqual(versionForComparison, specVersion))
     .exhaustive();
 
 export const compareVersionWithSpec = (version: Version, spec: Spec) => {
