@@ -14,7 +14,7 @@ Where the comparisons will be:
 
 TODO:
 
-1. Find a way to reduce repetition across comparison functions
+1. Better test cases
 2. Could probably write a simple and fast enough regex for parsing in one pass
 3. Improve types
 4. Find more bugs
