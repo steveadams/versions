@@ -11,8 +11,8 @@ export type Operator = typeof VALID_OPERATORS[number];
 export type Spec = `${Operator}${Version}`;
 
 type Predicate = (
-  a: [VersionPart, VersionPart],
-  b: [VersionPart, VersionPart]
+  testVersion: [VersionPart, VersionPart],
+  specVersion: [VersionPart, VersionPart]
 ) => boolean;
 
 const VALID_OPERATORS = [">", "<", "<=", ">="] as const;
@@ -46,8 +46,8 @@ export const parseVersionParts = (
 export const parseOperator = (spec: Spec): Operator => {
   const matches = allBeforeFirstDigit.exec(spec);
 
-  if (!matches) {
-    throw new Error(`Failed to get a valid operator from the spec: ${spec}`);
+  if (!matches || !matches[1]) {
+    throw new Error(`Failed to parse a valid operator from the spec: ${spec}`);
   }
 
   const operator = matches[1] as Operator;

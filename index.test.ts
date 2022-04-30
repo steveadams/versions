@@ -49,7 +49,13 @@ test("parseOperator throws when given invalid operator", () => {
   expect(() => parseOperator("==0.00")).toThrowError(/invalid/);
   // @ts-expect-error
   expect(() => parseOperator("!0.00")).toThrowError(/invalid/);
-  2;
+});
+
+test("parseOperator throws when given no operator", () => {
+  // @ts-expect-error
+  expect(() => parseOperator(54)).toThrowError(/Failed to parse/);
+  // @ts-expect-error
+  expect(() => parseOperator([])).toThrowError(/Failed to parse/);
 });
 
 // compareVersions operator tests - - -
