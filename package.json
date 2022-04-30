@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "test": "vitest"
+    "test": "vitest --reporter=verbose"
   },
   "dependencies": {
     "prettier": "^2.6.2",
