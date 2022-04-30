@@ -3,7 +3,7 @@ import {
   parseVersionParts,
   compareVersions,
   parseOperator,
-  compareVersionWithSpec,
+  testVersionAgainstSpec,
   compare,
   parseVersionAndSpec,
 } from "./";
@@ -85,31 +85,31 @@ test("compareVersions: '<=' yields correct results", () => {
 
 // compareVersionWithSpec tests
 
-test("compareVersionWithSpec yields correct results", () => {
-  expect(compareVersionWithSpec("1.1", ">1")).toBe(true);
-  expect(compareVersionWithSpec("1", ">1.1")).toBe(false);
-  expect(compareVersionWithSpec("2", ">2")).toBe(false);
-  expect(compareVersionWithSpec("0.01", ">0")).toBe(true);
+test("testVersionAgainstSpec yields correct results", () => {
+  expect(testVersionAgainstSpec("1.1", ">1")).toBe(true);
+  expect(testVersionAgainstSpec("1", ">1.1")).toBe(false);
+  expect(testVersionAgainstSpec("2", ">2")).toBe(false);
+  expect(testVersionAgainstSpec("0.01", ">0")).toBe(true);
 
-  expect(compareVersionWithSpec("1.1", "<1")).toBe(false);
-  expect(compareVersionWithSpec("1", "<1.1")).toBe(true);
-  expect(compareVersionWithSpec("2", "<2")).toBe(false);
-  expect(compareVersionWithSpec("0.01", "<0")).toBe(false);
+  expect(testVersionAgainstSpec("1.1", "<1")).toBe(false);
+  expect(testVersionAgainstSpec("1", "<1.1")).toBe(true);
+  expect(testVersionAgainstSpec("2", "<2")).toBe(false);
+  expect(testVersionAgainstSpec("0.01", "<0")).toBe(false);
 
-  expect(compareVersionWithSpec("1.1", "<=1")).toBe(false);
-  expect(compareVersionWithSpec("1", "<=1.1")).toBe(true);
-  expect(compareVersionWithSpec("2", "<=2")).toBe(true);
-  expect(compareVersionWithSpec("0.01", "<=0")).toBe(false);
+  expect(testVersionAgainstSpec("1.1", "<=1")).toBe(false);
+  expect(testVersionAgainstSpec("1", "<=1.1")).toBe(true);
+  expect(testVersionAgainstSpec("2", "<=2")).toBe(true);
+  expect(testVersionAgainstSpec("0.01", "<=0")).toBe(false);
 
-  expect(compareVersionWithSpec("1.1", ">=1")).toBe(true);
-  expect(compareVersionWithSpec("1", ">=1.1")).toBe(false);
-  expect(compareVersionWithSpec("2", ">=2")).toBe(true);
-  expect(compareVersionWithSpec("0.01", ">=0.0")).toBe(true);
+  expect(testVersionAgainstSpec("1.1", ">=1")).toBe(true);
+  expect(testVersionAgainstSpec("1", ">=1.1")).toBe(false);
+  expect(testVersionAgainstSpec("2", ">=2")).toBe(true);
+  expect(testVersionAgainstSpec("0.01", ">=0.0")).toBe(true);
 });
 
 // compareVersionAndSpecs tests
 
-test("compare yields correct results", () => {
+test("compare yields correct results with valid input", () => {
   expect(compare(["1.1,<=2.01", "1.1,>1", "1.1,<=2"])).toBe(true);
   expect(compare(["12.01,>12", "12.01,>0.12", "12.01,>=1"])).toBe(true);
   expect(compare(["12.01,<12", "12.01,>0.12", "12.01,>=1"])).toBe(true);

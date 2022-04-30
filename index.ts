@@ -91,7 +91,7 @@ export const compareVersions = (
     .exhaustive()(compare, spec);
 };
 
-export const compareVersionWithSpec = (version: Version, spec: Spec) => {
+export const testVersionAgainstSpec = (version: Version, spec: Spec) => {
   const operator = parseOperator(spec);
   const specVersion = spec.replace(operator, "") as Version;
 
@@ -102,6 +102,6 @@ export const compare = (versionsAndSpecs: string[]) => {
   return versionsAndSpecs.some((versionAndSpec) => {
     const [version, spec] = parseVersionAndSpec(versionAndSpec);
 
-    return compareVersionWithSpec(version, spec);
+    return testVersionAgainstSpec(version, spec);
   });
 };
