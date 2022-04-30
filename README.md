@@ -8,9 +8,9 @@ A simple algorithm for comparing lists of strings like:
 
 Where the comparisons will be:
 
-1. `1.01 > 2.1`
+1. `1.01 > 2.10`
 2. `3.0 <= 2.0`
-3. `3.01 >= 3.1`
+3. `3.01 >= 3.10`
 
 ## Running tests
 
